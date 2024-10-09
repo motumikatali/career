@@ -1,0 +1,31 @@
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Institution;
+
+class AdminController extends Controller
+{
+    public function dashboard()
+    {
+        $institutions = Institution::all();
+        return view('admin.dashboard', compact('institutions'));
+    }
+
+    public function addInstitution(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:institutions',
+            'password' => 'required|min:6'
+        ]);
+
+        Institution::create($validated);
+        return redirect()->back()->with('success', 'Institution added successfully!');
+    }
+
+    public function deleteInstitution($id)
+    {
+        Institution::find($id)->delete();
+        return redirect()->back()->with('success', 'Institution deleted successfully!');
+    }
+}
